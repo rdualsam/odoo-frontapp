@@ -110,6 +110,7 @@ class ResPartner(models.Model):
                     )
                 )
             partner["conversation_id"] = conversation_key
+            partner["formatted_address"] = self.browse(partner["id"])._get_partner_formatted_address()
             related_conversations, other_conversations = self._frontapp_conversations(
                 "res.partner", [partner["id"]], conversation_key
             )
@@ -313,3 +314,12 @@ class ResPartner(models.Model):
             )
             partner.toggle_contact_link(True, frontapp_context)
         return self.search_from_frontapp([], False, frontapp_context)
+
+    def _get_partner_formatted_address(self):
+        """ Display the address in the format: Zip City, Country """
+        self.ensure_one()
+        parts = filter(None, [self.zip, self.city])
+        formatted_address = " ".join(parts)
+        if self.country_id:
+            formatted_address = f"{formatted_address}, {self.country_id.name}" if formatted_address else self.country_id.name
+        return formatted_address

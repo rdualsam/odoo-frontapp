@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="frontapp_plugin.Note">
+        <div class="note wrap-collabsible mb-2 border">
+            <input t-att-id="'collapsible_' + props.note.id" class="toggle" type="checkbox" />
+            <label t-att-for="'collapsible_' + props.note.id" class="lbl-toggle">
+                <i class="fa fa-comment" />
+                <span class="note-date" ><t t-esc="props.note.date"/></span>
+                <div class="note-author" ><t t-esc="props.note.author"/></div>
+                <div class="ml-1" ><t t-esc="props.note.subject"/></div>
+            </label>
+            <div class="collapsible-content">
+                <div class="content-inner" t-out="markupBody">
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="frontapp_plugin.Opportunity">
+        <div class="opportunity border m-1 p-2">
+            <i class="fa fa-rocket" />
+            <input type="checkbox" t-att-checked="props.opportunity.isLinked"
+                   t-att-id="props.opportunity.id"/>
+<!--                   t-on-click="dispatch('toggleOpportunityLink', props.opportunity.id)"/>-->
+<!--            <span><i class="fa fa-star pl-1" t-foreach="[...Array(props.opportunity.stars).keys()]" t-key="0"/></span>-->
+            <t t-set="starIndex" t-value="0"/>
+            <span>
+                <t t-foreach="[...Array(props.opportunity.stars).keys()]" t-key="starIndex">
+                    <i class="fa fa-star pl-1"/>
+                    <t t-set="starIndex" t-value="starIndex + 1"/>
+                </t>
+            </span>
+            <a class="pl-1" t-att-href="props.opportunity.href" target="_blank">
+                <t t-esc="props.opportunity.name"/>
+            </a>
+            -
+            <t t-esc="props.opportunity.stage_id[1]"/>
+        </div>
+    </t>
+</templates>

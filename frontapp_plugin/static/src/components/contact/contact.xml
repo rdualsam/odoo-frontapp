@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+<t t-name="frontapp_plugin.Contact">
+    <div class="border m-1 p-2">
+        <div>
+            <t t-if="props.contact.company_type=='company'">
+                <i class="fa fa-building"/>
+            </t>
+                <t t-else="">
+              <i class="fa fa-user"/>
+            </t>
+            <a class="pl-1" t-att-href="props.contact.href" target="_blank">
+              <t t-esc="props.contact.name"/>
+            </a>
+        </div>
+        <div class="ml-1" t-if="props.contact.categories.length > 0">
+            <span class="tag" t-foreach="props.contact.categories"
+                  t-as="tag" t-key="tag" t-esc="tag"/>
+        </div>
+
+        <!-- FIXME these are customer specific fields -->
+        <div t-if="props.contact.stage_id">
+            <i class="fa fa-forward icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.stage_id[1]"/>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.relation_id">
+            <i class="fa fa-battery-2 icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.relation_id[1]"/>
+            </span>
+        </div>
+
+        <div class="contact-row" t-if="props.contact.function">
+            <i class="fa fa-briefcase icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.function"/>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.phone">
+            <i class="fa fa-phone icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.phone"/>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.mobile">
+            <i class="fa fa-mobile-phone icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.mobile"/>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.parent_href">
+            <i class="fa fa-building icon-fixed-width"/>
+            <span class="pl-1">
+                <a class="pl-1" t-att-href="props.contact.parent_href" target="_blank">
+                    <t t-esc="props.contact.parent_id[1]"/>
+                </a>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.formatted_address">
+            <i class="fa fa-map-marker icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.formatted_address"/>
+            </span>
+<!--            <span class="pl-1" t-if="props.contact.zip">-->
+<!--                <t t-esc="props.contact.zip"/>-->
+<!--            </span>-->
+<!--            <div t-if="props.contact.city">-->
+<!--                <t t-esc="props.contact.city"/>-->
+<!--            </div>-->
+<!--            <div t-if="props.contact.country_id">-->
+<!--                <t t-esc="props.contact.country_id[1]"/>-->
+<!--            </div>-->
+        </div>
+        <div class="contact-row" t-if="props.contact.user_id">
+            <i class="fa fa-user icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.user_id[1]"/>
+            </span>
+        </div>
+        <div class="contact-row" t-if="props.contact.privileged_distrib_id">
+          <!-- FIXME this is a customer specific field -->
+            <i class="fa fa-building icon-fixed-width"/>
+            <span class="pl-1">
+                <t t-esc="props.contact.privileged_distrib_id[1]"/>
+            </span>
+        </div>
+
+        <div class="opportunity-list">
+            <Opportunity t-foreach="props.contact.opportunities" t-as="opportunity" t-key="opportunity.id" opportunity="opportunity"/>
+        </div>
+        <div class="opportunity-create input-group input-group-sm">
+<!--            <button t-on-click="dispatch('createOpportunity', props.contact.id)" style="float:right" >-->
+            <input class="form-control ml-1" placeholder="Create Opportunity" t-att-id="'opp_input_' + props.contact.id"/>
+            <button class="btn btn-secondary" t-on-click="createOpportunity">
+                <i class="fa fa-save"/>
+            </button>
+        </div>
+
+        <div class="note-list">
+            <Note t-foreach="props.contact.other_conversations" t-as="note" t-key="note.id" note="note"/>
+        </div>
+        <div class="note-create input-group input-group-sm mb-2">
+<!--            <button t-on-click="dispatch('createNote', props.contact.id)" style="float:right" >-->
+            <textarea class="ml-1 form-control" placeholder="Create Note" t-att-id="'note_input_' + props.contact.id"/>
+            <button t-on-click="createNote" class="btn btn-secondary">
+                <i class="fa fa-save"/>
+            </button>
+        </div>
+    </div>
+</t>
+
+</templates>
