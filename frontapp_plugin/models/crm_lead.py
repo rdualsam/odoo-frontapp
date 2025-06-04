@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import fields, models
 
 
@@ -19,19 +21,15 @@ class MailMessage(models.Model):
             )[0]
             if is_linked:
                 if not existing_links:
-                    body = """
-                    <h3>%s</h3><a class="frontapp_conversation_link" target="_blank"
-                    href="https://app.frontapp.com/open/%s">%s...</a><br/>
-                    <a href="/web#model=res.partner&amp;id=%s" class="o_mail_redirect"
-                    data-oe-id="%s" data-oe-model="res.partner"
-                    target="_blank">@%s</a>
-                    """ % (
-                        subject,
-                        conversation_key,
-                        blurb,
-                        self.env.user.partner_id.id,
-                        self.env.user.partner_id.id,
-                        self.env.user.name,
+                    current_partner_id = self.env.user.partner_id.id
+                    body = Markup(
+                        f"""
+                    <h3>{subject}</h3><a class="frontapp_conversation_link" target="_blank"
+                    href="https://app.frontapp.com/open/{conversation_key}">{blurb}...</a><br/>
+                    <a href="/web#model=res.partner&amp;id={current_partner_id}" class="o_mail_redirect"
+                    data-oe-id="{current_partner_id}" data-oe-model="res.partner"
+                    target="_blank">@{self.env.user.name}</a>
+                    """
                     )
                     message = lead.message_post(
                         subject=subject,

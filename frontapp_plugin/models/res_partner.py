@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import api, fields, models
 
 PARTNER_LIMIT = 10
@@ -59,7 +61,7 @@ class ResPartner(models.Model):
             domain,
             offset=0,
             limit=PARTNER_LIMIT,
-            order="write_date DESC",
+            order="write_date DESC, is_company DESC, id DESC",
         )
 
     @api.model
@@ -110,7 +112,9 @@ class ResPartner(models.Model):
                     )
                 )
             partner["conversation_id"] = conversation_key
-            partner["formatted_address"] = self.browse(partner["id"])._get_partner_formatted_address()
+            partner["formatted_address"] = self.browse(
+                partner["id"]
+            )._get_partner_formatted_address()
             related_conversations, other_conversations = self._frontapp_conversations(
                 "res.partner", [partner["id"]], conversation_key
             )
@@ -131,7 +135,7 @@ class ResPartner(models.Model):
         partner_records = sorted(
             partner_records,
             key=lambda x: (x["id"] in linked_partner_ids, len(x["opportunities"])),
-            reverse=True
+            reverse=True,
             # TODO append partners
         )
         return partner_records
@@ -265,19 +269,15 @@ class ResPartner(models.Model):
             )[0]
             if is_linked:
                 if not existing_links:
-                    body = """
-                    <h3>%s</h3><a class="frontapp_conversation_link" target="_blank"
-                    href="https://app.frontapp.com/open/%s">%s...</a><br/>
-                    <a href="/web#model=res.partner&amp;id=%s" class="o_mail_redirect"
-                    data-oe-id="%s" data-oe-model="res.partner"
-                    target="_blank">@%s</a>
-                    """ % (
-                        subject,
-                        conversation_key,
-                        blurb,
-                        self.env.user.partner_id.id,
-                        self.env.user.partner_id.id,
-                        self.env.user.name,
+                    current_partner_id = self.env.user.partner_id.id
+                    body = Markup(
+                        f"""
+                    <h3>{subject}</h3><a class="frontapp_conversation_link" target="_blank"
+                    href="https://app.frontapp.com/open/{conversation_key}">{blurb}...</a><br/>
+                    <a href="/web#model=res.partner&amp;id={current_partner_id}" class="o_mail_redirect"
+                    data-oe-id="{current_partner_id}" data-oe-model="res.partner"
+                    target="_blank">@{self.env.user.name}</a>
+                    """
                     )
                     message = partner.message_post(
                         subject=subject,
@@ -316,10 +316,14 @@ class ResPartner(models.Model):
         return self.search_from_frontapp([], False, frontapp_context)
 
     def _get_partner_formatted_address(self):
-        """ Display the address in the format: Zip City, Country """
+        """Display the address in the format: Zip City, Country"""
         self.ensure_one()
         parts = filter(None, [self.zip, self.city])
         formatted_address = " ".join(parts)
         if self.country_id:
-            formatted_address = f"{formatted_address}, {self.country_id.name}" if formatted_address else self.country_id.name
+            formatted_address = (
+                f"{formatted_address}, {self.country_id.name}"
+                if formatted_address
+                else self.country_id.name
+            )
         return formatted_address

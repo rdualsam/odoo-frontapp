@@ -1,5 +1,5 @@
 .frontapp-odoo {
-    width: 300px;
+    width: 400px;
     margin: 10px auto;
     display: flex;
     flex-direction: column;
@@ -68,7 +68,7 @@ div.contact-info {
 }
 
 span.tag {
-    display: inline-flex;
+    /*display: inline-flex;*/
     font-size: 12px;
     background-color: #eb7e7f;
     color: #ffffff;
@@ -78,6 +78,10 @@ span.tag {
     margin-bottom: 0.2em;
     padding-bottom: 0.2em;
     border-radius: 10rem;
+}
+
+span.tag.opportunity-stage {
+    background-color: #7ebf7e;
 }
 
 .contact-panel {
@@ -258,7 +262,7 @@ input[type="checkbox"].toggle {
 
 a {
     text-decoration: none;
-    color: #00A09D;
+    color: #00a09d;
     transition: color 0.3s ease;
 }
 a:hover {

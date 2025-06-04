@@ -1,22 +1,32 @@
 /** @odoo-module **/
 
-import { Component } from "@odoo/owl";
-//import { useAutofocus } from "../utils";
+import {Component, useRef} from "@odoo/owl";
+import {useService} from "@web/core/utils/hooks";
+import {useFrontappStore} from "../../hooks/frontapp_store";
 
 export class Opportunity extends Component {
-  static template = "frontapp_plugin.Opportunity";
-//  static components = { TodoItem };
-  static props = { opportunity: Object };
+    static template = "frontapp_plugin.Opportunity";
+    static props = {opportunity: Object};
 
-//  setup() {
-//    this.store = useTodoStore();
-//    useAutofocus("input");
-//  }
+    setup() {
+        this.frontappStore = useFrontappStore();
+        this.errorRef = useRef("error");
+        this.orm = useService("orm");
+    }
 
-//  addTodo(ev) {
-//    if (ev.keyCode === 13 && ev.target.value != "") {
-//      this.store.addTodo(this.props.list.id, ev.target.value);
-//      ev.target.value = "";
-//    }
-//  }
+    async toggleOpportunityLink() {
+        const frontappContext = this.frontappStore.frontappContext;
+        this.orm
+            .call("crm.lead", "toggle_opportunity_link", [
+                [this.props.opportunity.id],
+                !this.props.opportunity.isLinked,
+                frontappContext,
+            ])
+            .then((result) => {
+                this.props.opportunity.isLinked = !this.props.opportunity.isLinked;
+            })
+            .catch((error) => {
+                console.log("Error toggling opportunity link:", error);
+            });
+    }
 }
