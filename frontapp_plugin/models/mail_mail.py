@@ -4,7 +4,15 @@ from odoo import models
 class MailMail(models.Model):
     _inherit = "mail.mail"
 
-    def _send(self, auto_commit=False, raise_exception=False, smtp_session=None):
+    def _send(
+        self,
+        auto_commit=False,
+        raise_exception=False,
+        smtp_session=None,
+        alias_domain_id=False,
+        mail_server=False,
+        post_send_callback=None,
+    ):
         """
         mail#send is called after commit() and this is when the subject is
         finally set. When object is res.partner and subtype is Note,
@@ -22,5 +30,10 @@ class MailMail(models.Model):
             except Exception:
                 pass
         return super()._send(
-            auto_commit=False, raise_exception=False, smtp_session=None
+            auto_commit,
+            raise_exception,
+            smtp_session,
+            alias_domain_id,
+            mail_server,
+            post_send_callback,
         )
